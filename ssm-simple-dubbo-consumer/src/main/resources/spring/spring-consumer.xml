@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+       http://code.alibabatech.com/schema/dubbo
+       http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!--开启注解扫描-->
+    <context:component-scan base-package="com.itmck.web"/>
+    <!--
+       目的: 去注册中心查找服务
+    -->
+
+    <!-- 1消费方应用名 我是谁 -->
+    <dubbo:application name="consumer"  />
+
+    <!-- 2配置注册中心 -->
+    <dubbo:registry address="zookeeper://47.96.123.213:2181" protocol="zookeeper"/>
+
+    <!--3 告诉他我要什么
+        id:引用完成给她起个名字
+        interface;要使用的service类型
+     -->
+    <dubbo:reference id="demoService" interface="com.itmck.org.service.DemoService" />
+</beans>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo
+       http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!--将自定义实现类交给容器去管理 也可以直接在实现类上使用@Service
+    但是要这里需要开启注解扫描
+        <context:component-scan base-package="com.itmck.web"/>
+    另外schame 上还要加上
+        xmlns:context="http://www.springframework.org/schema/context"
+
+         http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+    因为测试就一个,方便起见,直接在xml配置方式交给spring容器就行了
+    -->
+    <bean id="demoService" class="com.itmck.service.impl.DemoServiceImpl"/>
+    <!--使用dubbo的另外一个原因就是可以和Spring 无缝整合
+
+        目的:找到注册中心,告诉他我是谁,我的端口号是多少
+    -->
+    <!--这个服务叫什么 名称任意,主要在dubbo后台能够看到这个服务实例,做区分-->
+    <dubbo:application name="Provider"/>
+
+    <!--注册中心地址 address 以及端口 2181-->
+    <dubbo:registry address="zookeeper://47.96.123.213:2181" protocol="zookeeper"/>
+
+    <!--声明需要暴露的接口类型.告诉注册中心我是谁
+        interface:要发布的服务类型
+        ref:具体要发布哪个服务
+        timeout:连接超时时间
+    -->
+    <dubbo:service interface="com.itmck.org.service.DemoService" ref="demoService" timeout="6000"/>
+    <!--
+    配置我的端口;因为消费者想要连接我们,必须通过我们的ip以及端口进行访问
+    我们在链接注册中心的时候,注册中心已经知道我们的ip 但是不知道我们的端口.
+
+    name:协议名 port:端口号 可以随便写,但是不能被暂用
+     一个dubbo在对位发布的时候只能独占一个端口-->
+    <dubbo:protocol name="dubbo" port="20880"/>
+</beans>
